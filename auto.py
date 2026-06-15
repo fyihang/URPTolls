@@ -3,11 +3,13 @@ import requests
 from bs4 import BeautifulSoup
 class URPClient:
     def __init__(self, account, password):
+        # 保存当前登录账号和密码，并维持同一会话
         self.account = account
         self.password = password
         self.session = requests.session()
 
     def base_headers(self):
+        # 公共浏览器请求头，供后续请求复用
         return {
             "Host": "192.168.16.207:9001",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0",
@@ -19,6 +21,7 @@ class URPClient:
         }
 
     def list_headers(self, referer):
+        # 列表/提交类请求在公共头基础上补充表单相关字段
         return {
             **self.base_headers(),
             "Content-Type": "application/x-www-form-urlencoded",
@@ -28,6 +31,7 @@ class URPClient:
         }
 
     def get_student_name(self):
+        # 从顶部框架或相关页面中读取“当前用户”信息
         page_sources = [
             "http://192.168.16.207:9001/menu/top.jsp",
             f"http://192.168.16.207:9001/jxpgXsAction.do?oper=listWj&yzxh={self.account}",
@@ -43,6 +47,7 @@ class URPClient:
     def parse_current_user_name(self, html):
         import re
 
+        # 精确定位 td nowrap 单元格，解析括号中的姓名
         soup = BeautifulSoup(html, "html.parser")
         for td in soup.find_all("td", nowrap=True):
             cell_text = td.get_text(" ", strip=True).replace("\xa0", " ")
@@ -58,6 +63,7 @@ class URPClient:
 
     def login(self):
         import ddddocr
+        # 循环识别验证码，直到登录成功或账号密码错误
         header = {
             **self.list_headers("http://192.168.16.207:9001/loginAction.do"),
         }
@@ -95,9 +101,11 @@ class URPClient:
                 continue
             print("登录失败，正在重新获取验证码")
     def reset_session(self):
+        # 结束后重置会话，便于下一次重新登录
         self.session.close()
         self.session = requests.session()
     def get_and_evaluate_courses(self, student_name):
+        # 拉取未评课程并逐门提交，失败项交给重试逻辑
         evaluation_list_url = f"http://192.168.16.207:9001/jxpgXsAction.do?oper=listWj&yzxh={self.account}"
         headers = self.list_headers(evaluation_list_url)
         params = {
@@ -150,6 +158,7 @@ class URPClient:
         return True
 
     def retry_submit_course(self, student_name, course):
+        # 单门课程最多重试三次，仍失败则记录明确提示
         for attempt in range(1, 4):
             if self.submit_evaluation(
                 course["questionnaire_id"],
@@ -160,6 +169,7 @@ class URPClient:
         print(f"{student_name}的{course['course_name']}未成功评估")
         return False
     def submit_evaluation(self, questionnaire_id, evaluatee_id, evaluation_content):
+        # 先打开评估表单页，再提交自动填写的评估内容
         url = "http://192.168.16.207:9001/jxpgXsAction.do"
         headers1 = self.list_headers(f"http://192.168.16.207:9001/jxpgXsAction.do?oper=listWj&yzxh={self.account}")
         data = {
@@ -219,6 +229,7 @@ class URPClient:
             print("评估失败")
             return False
 if __name__ == "__main__":
+    # 支持连续登录多个账号，每轮结束后重置会话
     while True:
         account = input("请输入学号: ").strip()
         password = input("请输入密码: ").strip()
