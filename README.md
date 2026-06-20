@@ -1,68 +1,52 @@
-# URP 教学评估自动化工具
+# URP教学评估自动化工具
 
 一个用于自动完成使用URP高校教务管理系统（University Resource Planning）的高校（如清华大学、河南大学、扬州大学、西华大学）教学评估的Python工具。
 
-## 项目说明
+## Description
 
-- 本项目在[原项目](https://github.com/dygzn/urp_pg)的基础上，将账号密码的填写改为手动。
-- 原项目依赖ddddocr 1.5.6，要求python版本低于3.13，本项目main.py去除ddddocr改为手动填写。
-- 完成评估后，还可以继续为其他同学继续评估。
+- 本项目可快速完成教学评估，免去每个问卷需要三分钟才能提交的时间，也避免了不可填写重复项目的反人类特性。此外，还可快速查询最新学期的成绩和绩点。
 
-6.14 更新：
-- 新增auto.py，使用ddddocr自动识别验证码登录
-- 优化验证码识别
-- 可直接批量评估，无需输入y/n
+## Features
 
-6.15 更新（之后的更新都是在auto.py的基础上改进了）：
-- 优化登录逻辑，可获取学生姓名确认你再给谁做教学评估
-- 评估未完成时，会自动重新尝试评估
-- 优化代码结构
-
-6.19 更新：
-- 新增成绩和绩点快捷查询功能
-
-```bash
-python auto.py
-```
-
-## 功能特性
-
-- 🔐 登录 URP 教务系统
+- 🔐 登录URP高校教务管理系统
 - 🤖 自动识别验证码/手动填写验证码
 - 📝 自动获取未评估课程列表
 - ⚡ 批量完成教学评估
+- 📈 快捷查询最新学期的成绩和绩点
 
-## 环境要求
+## Environment
 
-- Python 3.13+ （建议3.14.6）
-- 可访问的 URP 教务系统
+- Python 3.14+
+- 可访问URP高校教务管理系统的网络环境
 
-## 安装步骤
+### Dependencies
 
-1. 克隆项目到本地
+- **requests**: HTTP 请求
+- **beautifulsoup4**: HTML 解析
+- **ddddocr**: OCR识别
 
-```bash
-git clone https://github.com/fyihang/urp_pg.git
-cd urp_pg
-```
-
-2. 安装依赖
-
-```bash
-pip install -r requirements.txt
-```
-
-## 使用方法
+## Usage
 
 1. 运行程序
 
+若要自动识别验证码登录，请运行 `auto.py` 文件。
 ```bash
 python auto.py
+```
+
+若要手动填写验证码登录，请运行 `main.py` 文件。
+```bash
+python main.py
+```
+
+若要查询成绩和绩点，请运行 `results.py` 文件。
+```bash
+python results.py
 ```
 
 2. 输入你的学号和密码
 
-## 配置说明
+## Configuration
 
 ### 修改目标服务器
 
@@ -72,13 +56,7 @@ python auto.py
 
 评估选项在 `submit_evaluation` 方法的 `evaluation_data` 字典中，可根据实际需求修改评分。
 
-## 依赖说明
-
-- **requests**: HTTP 请求库
-- **beautifulsoup4**: HTML 解析库
-
-## 常见问题
-
+## Common Issues
 
 ### Q1: ddddocr安装失败
 
@@ -109,7 +87,7 @@ python main.py
 2. 重新运行程序重新登录
 3. 确认代码中的服务器地址是否正确
 
-## 注意事项
+## Notes
 
 ⚠️ **重要提示**：
 
@@ -119,42 +97,33 @@ python main.py
 4. 验证码识别可能存在失败情况，如遇登录失败请重新运行
 5. 评估选项为预设值，建议根据实际情况调整
 
-## 代码结构
+## Update Log
 
-### 主要类和方法
+2026.06.20 Update：
+- 优化成绩查询功能
 
-- **URPClient**: URP 系统客户端类
-  - `login()`: 登录方法，自动识别验证码并完成登录
-  - `get_and_evaluate_courses()`: 获取未评估课程列表并自动评估
-  - `submit_evaluation()`: 提交单个课程的评估
+2026.06.19 Update：
+- 新增成绩和绩点快捷查询功能
 
-### 工作原理
+2026.06.15 Update：
+- 优化登录逻辑，可获取学生姓名确认你再给谁做教学评估
+- 评估未完成时，会自动重新尝试评估
+- 优化代码结构
 
-1. 使用 `requests.session()` 维持会话状态
-2. 通过 `ddddocr` 识别登录验证码
-3. 使用 `BeautifulSoup` 解析课程列表页面
-4. 自动提交评估表单完成评教
+2026.06.14 Update：
+- 新增auto.py，使用ddddocr自动识别验证码登录
+- 优化验证码识别
+- 可直接批量评估，无需输入y/n
 
-### 命名规范
-
-本项目遵循 Python PEP 8 命名规范：
-- 类名使用大驼峰命名法（如 `URPClient`）
-- 方法名使用小写字母和下划线（如 `get_and_evaluate_courses`）
-- 变量名使用描述性英文命名（如 `captcha_code`, `evaluation_data`）
-
-## 本地部署
+## Local Deployment
 
 本项目完全在本地运行：
 
 1. 确保 Python 环境已安装
 2. 安装所需依赖包
 3. 修改代码中的服务器地址为你的 URP 系统地址
-4. 配置账号密码后直接运行
+4. 账号密码不存储在代码中，仅在运行时输入
 
-## 许可证
+## Disclaimer
 
-本项目仅供学习参考使用。
-
-## 免责声明
-
-使用本工具产生的一切后果由使用者自行承担，开发者不承担任何责任。请合理使用，遵守您所在学校相关规定。
+本项目仅供学习参考使用。使用本工具产生的一切后果由使用者自行承担，开发者不承担任何责任。请合理使用，遵守您所在学校相关规定。
