@@ -1,6 +1,6 @@
-# URP教学评估自动化工具
+# URP高校教务管理系统实用工具
 
-一个用于自动完成使用URP高校教务管理系统（University Resource Planning）的高校（如清华大学、河南大学、扬州大学、西华大学）教学评估的Python工具。
+用于帮助使用URP高校教务管理系统（University Resource Planning）的高校学生便捷操作的小工具。
 
 ## Description
 
