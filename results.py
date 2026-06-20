@@ -250,8 +250,11 @@ class URPClient:
 
 
 if __name__ == "__main__":
-    account = input("请输入学号: ").strip()
-    password = input("请输入密码: ").strip()
-    client = URPClient(account, password)
-    if client.login():
-        client.print_latest_semester_results()
+    # 支持连续查询多个账号，每轮结束后重置会话回到登录
+    while True:
+        account = input("请输入学号: ").strip()
+        password = input("请输入密码: ").strip()
+        client = URPClient(account, password)
+        if client.login():
+            client.print_latest_semester_results()
+        client.session.close()
